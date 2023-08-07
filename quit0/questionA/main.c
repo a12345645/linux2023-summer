@@ -185,6 +185,7 @@ static inline void st_replace_right(struct st_node *n, struct st_node *r)
 {
     struct st_node *p = st_parent(n), *rp = st_parent(r);
 
+    // if r is the left node of rp, move the right node of rp to replace it.
     if (st_left(rp) == r) {
         st_left(rp) = st_right(r);
         if (st_right(r))
@@ -250,7 +251,7 @@ static inline void st_replace_left(struct st_node *n, struct st_node *l)
  *
  * Similarly, if the node to be deleted does not have a right child, the
  * replacement process involves utilizing the first node found in the left
- * subtree. Subsequently, an update operation is called on the left child of th
+ * subtree. Subsequently, an update operation is called on the left child of the
  * replacement node.
  *
  * In scenarios where the node to be deleted has no children (neither left nor
@@ -264,8 +265,8 @@ void st_remove(struct st_node **root, struct st_node *del)
         if (del == *root)
             *root = least;
 
-        AAAA;
-        BBBB;
+        st_replace_right(del, least);
+        st_update(root, least);
         return;
     }
 
@@ -274,8 +275,8 @@ void st_remove(struct st_node **root, struct st_node *del)
         if (del == *root)
             *root = most;
 
-        CCCC;
-        DDDD;
+        st_replace_left(del, most);
+        st_update(root, most);
         return;
     }
 
@@ -292,7 +293,7 @@ void st_remove(struct st_node **root, struct st_node *del)
     else
         st_right(parent) = 0;
 
-    EEEE;
+    st_update(root, parent);
 }
 
 /* Test program */
@@ -408,12 +409,12 @@ static void __treeint_dump(struct st_node *n, int depth)
     if (!n)
         return;
 
-    __treeint_dump(FFFF, depth + 1);
+    __treeint_dump(st_left(n), depth + 1);
 
     struct treeint *v = treeint_entry(n);
     printf("%d\n", v->value);
 
-    __treeint_dump(GGGG, depth + 1);
+    __treeint_dump(st_right(n), depth + 1);
 }
 
 void treeint_dump()

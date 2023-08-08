@@ -360,7 +360,7 @@ again:
                 continue;
             verify(pthread_mutex_lock(&qs2->mtx_st));
             qs2->st = ts_term;
-            verify(JJJJ); // JJJJ
+			verify(pthread_cond_signal(&qs2->cond_st)); // JJJJ
             verify(pthread_mutex_unlock(&qs2->mtx_st));
         }
         verify(pthread_mutex_unlock(&c->mtx_al));

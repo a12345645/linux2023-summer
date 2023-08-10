@@ -72,6 +72,7 @@ struct st_node *st_last(struct st_node *n)
     return st_last(st_right(n));
 }
 
+// Pull up the left child node of n
 static inline void st_rotate_left(struct st_node *n)
 {
     struct st_node *l = st_left(n), *p = st_parent(n);
@@ -90,6 +91,7 @@ static inline void st_rotate_left(struct st_node *n)
         st_lparent(n) = n;
 }
 
+// Pull up the right child node of n
 static inline void st_rotate_right(struct st_node *n)
 {
     struct st_node *r = st_right(n), *p = st_parent(n);
@@ -265,8 +267,8 @@ void st_remove(struct st_node **root, struct st_node *del)
         if (del == *root)
             *root = least;
 
-        st_replace_right(del, least);
-        st_update(root, least);
+        st_replace_right(del, least);       // AAAA
+        st_update(root, st_parent(least));  // BBBB
         return;
     }
 
@@ -275,8 +277,8 @@ void st_remove(struct st_node **root, struct st_node *del)
         if (del == *root)
             *root = most;
 
-        st_replace_left(del, most);
-        st_update(root, most);
+        st_replace_left(del, most);        // CCCC
+        st_update(root, st_parent(most));  // DDDD
         return;
     }
 
@@ -293,7 +295,7 @@ void st_remove(struct st_node **root, struct st_node *del)
     else
         st_right(parent) = 0;
 
-    st_update(root, parent);
+    st_update(root, parent);  // EEEE
 }
 
 /* Test program */
@@ -409,12 +411,12 @@ static void __treeint_dump(struct st_node *n, int depth)
     if (!n)
         return;
 
-    __treeint_dump(st_left(n), depth + 1);
+    __treeint_dump(st_left(n), depth + 1);  // FFFF
 
     struct treeint *v = treeint_entry(n);
     printf("%d\n", v->value);
 
-    __treeint_dump(st_right(n), depth + 1);
+    __treeint_dump(st_right(n), depth + 1);  // GGGG
 }
 
 void treeint_dump()
